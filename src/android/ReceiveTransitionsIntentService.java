@@ -72,7 +72,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
-                    if (geoNotification != null) {
+                    if (geoNotification != null && GeofenceSettings.getInstance().getPushNotifications()) {
                         notifier.notify(
                                 geoNotification.notification,
                                 (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));

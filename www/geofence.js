@@ -37,6 +37,34 @@ Geofence.prototype.initialize = function (success, error) {
 };
 
 /**
+ * Initializing geofence plugin
+ *
+ * @name enablePushNotifications
+ * @param  {Boolean|Array} notifications setting
+ * @param  {Function} success callback
+ * @param  {Function} error callback
+ *
+ * @return {Promise}
+ */
+Geofence.prototype.enablePushNotifications = function (pushOn, success, error) {
+    return execPromise(success, error, 'GeofencePlugin', 'enablePushNotifications', [pushOn]);
+};
+
+/**
+ * Initializing geofence plugin
+ *
+ * @name enableTracking
+ * @param  {Boolean|Array} tracking setting
+ * @param  {Function} success callback
+ * @param  {Function} error callback
+ *
+ * @return {Promise}
+ */
+Geofence.prototype.enableTracking = function (trackOn, success, error) {
+    return execPromise(success, error, 'GeofencePlugin', 'enableTracking', [trackOn]);
+};
+
+/**
  * Removing geofences with given ids
  *
  * @name  remove

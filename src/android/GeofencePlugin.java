@@ -20,6 +20,7 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
     private GeoNotificationManager geoNotificationManager;
     private Context context;
+    private LocationUpdateService locationUpdateService;
     protected static Boolean isInBackground = true;
     private static CordovaWebView webView = null;
 
@@ -68,7 +69,34 @@ public class GeofencePlugin extends CordovaPlugin {
             Gson gson = new Gson();
             callbackContext.success(gson.toJson(geoNotifications));
         } else if (action.equals("initialize")) {
-
+        	locationUpdateService = new LocationUpdateService(context) {
+				@Override
+				protected void fencesReceived(final List<GeoNotification> fences) {
+					geoNotificationManager.removeAllGeoNotifications(new CallbackContext(null, webView) {
+						@Override
+						public void success() {
+							Log.d(TAG, "Adding " + fences.size() + " fences");
+							geoNotificationManager.addGeoNotifications(fences, null);
+						}
+					});
+				}
+			};
+			locationUpdateService.startMonitoring();
+        } else if (action.equals("enablePushNotifications")) {
+            for (int i = 0; i < args.length(); i++) {
+            	GeofenceSettings.getInstance().setPushNotifications(args.getBoolean(i));
+            }
+        } else if (action.equals("enableTracking")) {
+            for (int i = 0; i < args.length(); i++) {
+            	GeofenceSettings.getInstance().setTracking(args.getBoolean(i));
+            	if (args.getBoolean(i)) {
+            		locationUpdateService.startMonitoring();
+            	}
+            	else {
+            		geoNotificationManager.removeAllGeoNotifications(callbackContext);
+            		locationUpdateService.stopMonitoring();
+            	}
+            }
         } else {
             return false;
         }
